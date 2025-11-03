@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tamil Nadu Tourism Explorer</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #eef3ff, #f8f9fa);
+    margin: 0;
+    text-align: center;
+    color: #333;
+  }
+
+  header {
+    background: #e2e209;
+    color: white;
+    padding: 1.5em;
+    font-size: 1.8em;
+    font-weight: bold;
+  }
+
+  .search-container {
+    margin: 30px auto;
+    max-width: 500px;
+  }
+
+  input {
+    width: 75%;
+    padding: 10px;
+    border: 2px solid #0025ad;
+    border-radius: 8px;
+    font-size: 1em;
+  }
+
+  button {
+    padding: 10px 16px;
+    background: #004aad;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #002f75;
+  }
+
+  .results {
+    margin: 20px auto;
+    max-width: 600px;
+  }
+
+  .place-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    margin: 15px;
+    padding: 15px;
+    text-align: left;
+  }
+
+  .place-card h3 {
+    color: #004aad;
+  }
+
+  footer {
+    margin-top: 40px;
+    padding: 20px;
+    font-size: 0.9em;
+    color: #555;
+  }
+</style>
+</head>
+<body>
+<header>
+  Tamil Nadu Tourism Explorer
+</header>
+
+<div class="search-container">
+  <input type="text" id="cityInput" placeholder="Enter district name (e.g., Madurai, Salem)">
+  <button onclick="searchCity()">Search</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<footer>© 2025 Tamil Nadu Tourism | Explore the Beauty of the South</footer>
+
+<script>
+const data = {
+  chennai: [
+    { name: "Marina Beach", desc: "One of the world's longest beaches." },
+    { name: "Kapaleeshwarar Temple", desc: "A magnificent Dravidian-style temple." }
+  ],
+  coimbatore: [
+    { name: "Isha Yoga Center", desc: "Home to the iconic Adiyogi statue." },
+    { name: "Marudhamalai Temple", desc: "Hill temple dedicated to Lord Murugan." }
+  ],
+  madurai: [
+    { name: "Meenakshi Amman Temple", desc: "Renowned for its towering gopurams." },
+    { name: "Thirumalai Nayakar Mahal", desc: "Palace showcasing Indo-Saracenic architecture." }
+  ],
+  tiruchirappalli: [
+    { name: "Rockfort Temple", desc: "Temple perched atop a historic rock." },
+    { name: "Srirangam Temple", desc: "Largest functioning Hindu temple complex." }
+  ],
+  thanjavur: [
+    { name: "Brihadeeswarar Temple", desc: "UNESCO World Heritage Chola temple." },
+    { name: "Thanjavur Palace", desc: "Home to art gallery and Saraswathi Mahal Library." }
+  ],
+  tirunelveli: [
+    { name: "Nellaiappar Temple", desc: "Historic temple dedicated to Lord Shiva." },
+    { name: "Courtallam Falls", desc: "Famous waterfall spa of South India." }
+  ],
+  kanyakumari: [
+    { name: "Vivekananda Rock Memorial", desc: "Located on a rocky island." },
+    { name: "Thiruvalluvar Statue", desc: "Monument to the Tamil poet Thiruvalluvar." }
+  ],
+  ooty: [
+    { name: "Ooty Lake", desc: "Picturesque boating destination." },
+    { name: "Botanical Gardens", desc: "Sprawling gardens with rare flora." }
+  ],
+  salem: [
+    { name: "Yercaud Hills", desc: "Scenic hill station with viewpoints." },
+    { name: "1008 Lingam Temple", desc: "Unique temple with numerous lingams." }
+  ],
+  erode: [
+    { name: "Bhavani Sangameshwarar Temple", desc: "Located at the confluence of rivers." },
+    { name: "Vellode Bird Sanctuary", desc: "Haven for migratory birds." }
+  ],
+  vellore: [
+    { name: "Vellore Fort", desc: "Historic fort built by Vijayanagar kings." },
+    { name: "Golden Temple Sripuram", desc: "Temple with golden architecture." }
+  ],
+  tiruvannamalai: [
+    { name: "Annamalaiyar Temple", desc: "Famous temple and Girivalam path." },
+    { name: "Arunachala Hills", desc: "Spiritual destination for seekers." }
+  ],
+  cuddalore: [
+    { name: "Silver Beach", desc: "Beautiful and less crowded seashore." },
+    { name: "Pichavaram Mangrove Forest", desc: "Second largest mangrove forest in the world." }
+  ],
+  nagapattinam: [
+    { name: "Velankanni Church", desc: "Renowned Christian pilgrimage center." },
+    { name: "Kodikkarai (Point Calimere)", desc: "Wildlife sanctuary and scenic coast." }
+  ],
+  pudukkottai: [
+    { name: "Sittanavasal Caves", desc: "Ancient Jain cave with murals." },
+    { name: "Thirumayam Fort", desc: "Historic fortress from the Nayak era." }
+  ],
+  sivaganga: [
+    { name: "Chettinad Mansions", desc: "Traditional palatial houses of Chettinad." },
+    { name: "Kundrakudi Murugan Temple", desc: "Temple atop a small hill." }
+  ],
+  virudhunagar: [
+    { name: "Srivilliputhur Andal Temple", desc: "Tower featured in Tamil Nadu emblem." },
+    { name: "Ayyanar Falls", desc: "Serene waterfall spot near Rajapalayam." }
+  ],
+  thoothukudi: [
+    { name: "Our Lady of Snows Basilica", desc: "Historic church built by the Portuguese." },
+    { name: "Manapad Beach", desc: "Quiet coastal village with coral reefs." }
+  ],
+  dindigul: [
+    { name: "Dindigul Fort", desc: "Hill fort offering panoramic city views." },
+    { name: "Sirumalai Hills", desc: "Lush green hill area for trekking." }
+  ],
+  namakkal: [
+    { name: "Namakkal Fort", desc: "Ancient fort on a huge rock." },
+    { name: "Anjaneya Temple", desc: "Temple with an 18-feet Hanuman idol." }
+  ],
+  krishnagiri: [
+    { name: "Krishnagiri Dam", desc: "Beautiful reservoir surrounded by hills." },
+    { name: "Rayakottai Fort", desc: "Historic fort built by Hyder Ali." }
+  ],
+  dharmapuri: [
+    { name: "Hogenakkal Falls", desc: "‘Niagara of India’ on the Cauvery river." },
+    { name: "Theerthamalai Temple", desc: "Hill temple with scenic surroundings." }
+  ],
+  karur: [
+    { name: "Kalyana Pasupatheeswarar Temple", desc: "Prominent temple of Lord Shiva." },
+    { name: "Mayanur Barrage", desc: "Popular picnic spot on River Cauvery." }
+  ],
+  perambalur: [
+    { name: "Ranjankudi Fort", desc: "Battle site of the Carnatic Wars." },
+    { name: "Siruvachur Madhurakali Temple", desc: "Ancient temple dedicated to Goddess Kali." }
+  ],
+  ariyalur: [
+    { name: "Gangaikonda Cholapuram", desc: "UNESCO temple built by Rajendra Chola I." },
+    { name: "Jayamkondam Fossil Site", desc: "Rich site with ancient marine fossils." }
+  ],
+  nilgiris: [
+    { name: "Coonoor", desc: "Charming hill town near Ooty." },
+    { name: "Doddabetta Peak", desc: "Highest point in the Nilgiris." }
+  ],
+  tiruppur: [
+    { name: "Avinashi Temple", desc: "Historic temple on the way to Coimbatore." },
+    { name: "Amaravathi Dam", desc: "Picturesque dam site with crocodile park." }
+  ],
+  ranipet: [
+    { name: "Jalakandeswarar Temple", desc: "Temple with intricate carvings." },
+    { name: "Amirthi Forest", desc: "Small forest and picnic spot near Vellore." }
+  ],
+  tenkasi: [
+    { name: "Courtallam Falls", desc: "Scenic waterfalls with natural spa effect." },
+    { name: "Kasi Viswanathar Temple", desc: "Temple modeled after Kashi Vishwanath." }
+  ],
+  tirupathur: [
+    { name: "Vaniyambadi Mosque", desc: "Oldest mosque in the region." },
+    { name: "Yelagiri Hills", desc: "Peaceful hill station near Vellore." }
+  ],
+  kallakurichi: [
+    { name: "Kalvarayan Hills", desc: "Trekker’s paradise with lush greenery." },
+    { name: "Veeratteswarar Temple", desc: "Ancient temple with Chola architecture." }
+  ],
+  mayiladuthurai: [
+    { name: "Mayuranathaswami Temple", desc: "Historic temple in Mayiladuthurai town." },
+    { name: "Vaitheeswaran Koil", desc: "Famous temple of healing." }
+  ],
+  tiruvallur: [
+    { name: "Poondi Reservoir", desc: "Major water source and picnic spot." },
+    { name: "Veeraraghava Temple", desc: "Ancient temple dedicated to Vishnu." }
+  ],
+  kallakurichi: [
+    { name: "Kalvarayan Hills", desc: "Serene hill station perfect for trekking." }
+  ],
+  chengalpattu: [
+    { name: "Mahabalipuram", desc: "UNESCO heritage shore temples and sculptures." },
+    { name: "Crocodile Bank", desc: "Conservation center for reptiles." }
+  ],
+  kancheepuram: [
+    { name: "Ekambareswarar Temple", desc: "Magnificent Shiva temple." },
+    { name: "Kamakshi Amman Temple", desc: "Major Shakti Peetha." }
+  ],
+  nagapattinam: [
+    { name: "Velankanni Church", desc: "Major pilgrimage destination." },
+    { name: "Point Calimere", desc: "Sanctuary for flamingos and wildlife." }
+  ]
+};
+
+function searchCity() {
+  const city = document.getElementById('cityInput').value.trim().toLowerCase();
+  const resultsDiv = document.getElementById('results');
+  resultsDiv.innerHTML = '';
+
+  if (data[city]) {
+    data[city].forEach(place => {
+      const card = document.createElement('div');
+      card.className = 'place-card';
+      card.innerHTML = `<h3>${place.name}</h3><p>${place.desc}</p>`;
+      resultsDiv.appendChild(card);
+    });
+  } else {
+    resultsDiv.innerHTML = `<p style="color:red;">No data found for "${city}". Try popular ones like Chennai, Madurai, Thanjavur, Salem, Coimbatore, or Ooty.</p>`;
+  }
+}
+</script>
+</body>
+</html>
